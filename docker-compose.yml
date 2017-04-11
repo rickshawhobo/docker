@@ -1,0 +1,43 @@
+version: '2'
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: investforward/backend
+    volumes:
+     - ../api:/var/www
+     - ../api/public:/var/www/html
+    ports:
+     - "80:80"
+     - "443:443"
+    networks:
+     - ifnet
+
+  mysql:
+    image: mysql:5.7
+    ports:
+     - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "secret"
+      MYSQL_DATABASE: "ifdb"
+      MYSQL_USER: "ifdb"
+      MYSQL_PASSWORD: "secret"
+    volumes:
+     - mysqldata:/var/lib/mysql
+    networks:
+     - ifnet
+  redis:
+    image: redis:alpine
+    volumes:
+     - redisdata:/data
+    networks:
+     - ifnet
+networks:
+  ifnet:
+    driver: "bridge"
+volumes:
+  mysqldata:
+    driver: "local"
+  redisdata:
+    driver: "local"
